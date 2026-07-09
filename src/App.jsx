@@ -10,6 +10,7 @@ function App() {
   const fileInputRef = useRef(null);
   const [modelUrl, setModelUrl] = useState(null);
   const [explodeAmount, setExplodeAmount] = useState(0);
+  const [selectedPiece, setSelectedPiece] = useState(null);
 
   function handleOpenProject() {
     fileInputRef.current.click();
@@ -34,9 +35,14 @@ function App() {
       />
 
       <Header onOpenProject={handleOpenProject} />
-      <Sidebar />
+      <Sidebar selectedPiece={selectedPiece} />
 
-      <Viewer modelUrl={modelUrl} explodeAmount={explodeAmount} />
+      <Viewer
+        modelUrl={modelUrl}
+        explodeAmount={explodeAmount}
+        onSelectPiece={setSelectedPiece}
+        selectedPiece={selectedPiece}
+      />
 
       <Toolbar
         explodeAmount={explodeAmount}

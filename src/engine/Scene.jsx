@@ -1,89 +1,59 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid } from "@react-three/drei";
-import ModelLoader from "./ModelLoader";
 
-function Piece({ name, size, position, color, explodeDirection, explodeAmount }) {
-  const factor = explodeAmount / 100;
+import demoProject from "../data/demoProject";
 
-  const finalPosition = [
-    position[0] + explodeDirection[0] * factor,
-    position[1] + explodeDirection[1] * factor,
-    position[2] + explodeDirection[2] * factor,
-  ];
+function getMaterial(project, materialId) {
+  return project.materials.find((material) => material.id === materialId);
+}
+
+function getPieceSize(piece) {
+  const { width, height, thickness } = piece.dimensions;
+
+  if (piece.type === "LATERAL") {
+    return [thickness / 100, height / 350, width / 1000];
+  }
+
+  if (piece.type === "PORTA") {
+    return [width / 700, height / 350, thickness / 100];
+  }
+
+  return [1, 1, 1];
+}
+
+function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece }) {
+  const material = getMaterial(project, piece.materialId);
+  const finalPosition = piece.getExplodedPosition(explodeAmount);
+  const isSelected = selectedPiece?.id === piece.id;
+
+  function handleClick(event) {
+    event.stopPropagation();
+    onSelectPiece(piece);
+  }
 
   return (
-    <mesh position={finalPosition} castShadow>
-      <boxGeometry args={size} />
-      <meshStandardMaterial color={color} />
+    <mesh position={finalPosition} castShadow onClick={handleClick}>
+      <boxGeometry args={getPieceSize(piece)} />
+      <meshStandardMaterial color={isSelected ? "#22c55e" : material.color} />
     </mesh>
   );
 }
 
-function TestCabinet({ explodeAmount }) {
+function ProjectModel({ project, explodeAmount, selectedPiece, onSelectPiece }) {
   return (
     <group>
-      <Piece
-        name="Lateral Esquerda"
-        size={[0.12, 2, 0.8]}
-        position={[-0.56, 0.5, 0]}
-        color="#d97706"
-        explodeDirection={[-1.2, 0, 0]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Lateral Direita"
-        size={[0.12, 2, 0.8]}
-        position={[0.56, 0.5, 0]}
-        color="#d97706"
-        explodeDirection={[1.2, 0, 0]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Base"
-        size={[1.2, 0.12, 0.8]}
-        position={[0, -0.44, 0]}
-        color="#f59e0b"
-        explodeDirection={[0, -0.8, 0]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Tampo"
-        size={[1.2, 0.12, 0.8]}
-        position={[0, 1.44, 0]}
-        color="#f59e0b"
-        explodeDirection={[0, 0.8, 0]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Prateleira"
-        size={[1.05, 0.08, 0.75]}
-        position={[0, 0.45, 0]}
-        color="#fbbf24"
-        explodeDirection={[0, 0.4, 0]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Porta"
-        size={[1.15, 1.8, 0.08]}
-        position={[0, 0.5, 0.44]}
-        color="#92400e"
-        explodeDirection={[0, 0, 1.4]}
-        explodeAmount={explodeAmount}
-      />
-
-      <Piece
-        name="Fundo"
-        size={[1.15, 1.9, 0.06]}
-        position={[0, 0.5, -0.43]}
-        color="#b45309"
-        explodeDirection={[0, 0, -1.0]}
-        explodeAmount={explodeAmount}
-      />
+      {project.modules.map((module) =>
+        module.pieces.map((piece) => (
+          <PieceMesh
+            key={piece.id}
+            piece={piece}
+            project={project}
+            explodeAmount={explodeAmount}
+            selectedPiece={selectedPiece}
+            onSelectPiece={onSelectPiece}
+          />
+        ))
+      )}
     </group>
   );
 }
@@ -97,17 +67,18 @@ function Floor() {
   );
 }
 
-function Scene({ modelUrl, explodeAmount }) {
+function Scene({ explodeAmount, onSelectPiece, selectedPiece }) {
   return (
     <Canvas shadows camera={{ position: [4, 3, 4], fov: 45 }}>
       <ambientLight intensity={1.3} />
       <directionalLight position={[5, 8, 5]} intensity={2} castShadow />
 
-      {modelUrl ? (
-        <ModelLoader url={modelUrl} />
-      ) : (
-        <TestCabinet explodeAmount={explodeAmount} />
-      )}
+      <ProjectModel
+        project={demoProject}
+        explodeAmount={explodeAmount}
+        selectedPiece={selectedPiece}
+        onSelectPiece={onSelectPiece}
+      />
 
       <Floor />
 
