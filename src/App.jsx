@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import "./App.css";
 
 import Header from "./components/layout/Header";
@@ -9,10 +9,6 @@ import Toolbar from "./components/layout/Toolbar";
 function App() {
   const fileInputRef = useRef(null);
 
-  const [modelUrl, setModelUrl] = useState(null);
-  const [explodeAmount, setExplodeAmount] = useState(0);
-  const [selectedPiece, setSelectedPiece] = useState(null);
-
   function handleOpenProject() {
     fileInputRef.current.click();
   }
@@ -21,7 +17,7 @@ function App() {
     const file = event.target.files[0];
     if (!file) return;
 
-    setModelUrl(URL.createObjectURL(file));
+    URL.createObjectURL(file);
   }
 
   return (
@@ -34,27 +30,13 @@ function App() {
         onChange={handleFileChange}
       />
 
-      <Header
-  onOpenProject={handleOpenProject}
-  onSelectPiece={setSelectedPiece}
-/>
+      <Header onOpenProject={handleOpenProject} />
 
-      <Sidebar
-        selectedPiece={selectedPiece}
-        onSelectPiece={setSelectedPiece}
-      />
+      <Sidebar />
 
-      <Viewer
-        modelUrl={modelUrl}
-        explodeAmount={explodeAmount}
-        selectedPiece={selectedPiece}
-        onSelectPiece={setSelectedPiece}
-      />
+      <Viewer />
 
-      <Toolbar
-        explodeAmount={explodeAmount}
-        onExplodeChange={setExplodeAmount}
-      />
+      <Toolbar />
     </div>
   );
 }

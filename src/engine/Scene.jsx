@@ -4,6 +4,7 @@ import { OrbitControls, Grid } from "@react-three/drei";
 
 import demoProject from "../data/demoProject";
 import CameraController from "./Camera";
+import { useViewer } from "../context/ViewerContext";
 
 function getMaterial(project, materialId) {
   return project.materials.find((material) => material.id === materialId);
@@ -23,7 +24,27 @@ function getPieceSize(piece) {
   return [1, 1, 1];
 }
 
+function shouldShowPiece(piece, selectedPiece, isolateMode) {
+  if (!selectedPiece) return true;
+
+  if (isolateMode === "piece") {
+    return piece.id === selectedPiece.id;
+  }
+
+  if (isolateMode === "module") {
+    return piece.moduleId === selectedPiece.moduleId;
+  }
+
+  return true;
+}
+
 function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece }) {
+  const { isolateMode } = useViewer();
+
+  if (!shouldShowPiece(piece, selectedPiece, isolateMode)) {
+    return null;
+  }
+
   const material = getMaterial(project, piece.materialId);
   const finalPosition = piece.getExplodedPosition(explodeAmount);
 

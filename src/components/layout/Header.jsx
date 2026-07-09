@@ -1,38 +1,35 @@
 import { useState } from "react";
-import SearchEngine from "../../engine/SearchEngine";
-import demoProject from "../../data/demoProject";
 
-function Header({ onOpenProject, onSelectPiece }) {
+import SearchEngine from "../../engine/SearchEngine";
+import { useProject } from "../../context/ProjectContext";
+import { useViewer } from "../../context/ViewerContext";
+
+function Header({ onOpenProject }) {
+  const { project } = useProject();
+  const { setSelectedPiece } = useViewer();
+
   const [search, setSearch] = useState("");
 
   function handleSearch(event) {
     const value = event.target.value;
-
     setSearch(value);
 
     if (!value) {
-      onSelectPiece(null);
+      setSelectedPiece(null);
       return;
     }
 
-    const engine = new SearchEngine(demoProject);
-
+    const engine = new SearchEngine(project);
     const result = engine.search(value);
 
-    if (
-      result &&
-      result.type === "piece"
-    ) {
-      onSelectPiece(result.object);
+    if (result?.type === "piece") {
+      setSelectedPiece(result.object);
     }
   }
 
   return (
     <header className="header">
-
-      <button onClick={onOpenProject}>
-        📁 Abrir Projeto
-      </button>
+      <button onClick={onOpenProject}>📁 Abrir Projeto</button>
 
       <input
         type="text"
@@ -41,10 +38,7 @@ function Header({ onOpenProject, onSelectPiece }) {
         onChange={handleSearch}
       />
 
-      <h2>
-        MobiView
-      </h2>
-
+      <h2>MobiView</h2>
     </header>
   );
 }

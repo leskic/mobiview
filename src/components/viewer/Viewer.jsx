@@ -1,13 +1,19 @@
 import Scene from "../../engine/Scene";
+import { useViewer } from "../../context/ViewerContext";
 
-function Viewer({ modelUrl, explodeAmount, onSelectPiece, selectedPiece }) {
+function Viewer() {
+  const {
+    selectedPiece,
+    setSelectedPiece,
+    explodeAmount,
+  } = useViewer();
+
   return (
     <main className="viewer-area">
       <Scene
-        modelUrl={modelUrl}
         explodeAmount={explodeAmount}
-        onSelectPiece={onSelectPiece}
         selectedPiece={selectedPiece}
+        onSelectPiece={setSelectedPiece}
       />
     </main>
   );

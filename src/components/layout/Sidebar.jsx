@@ -1,81 +1,122 @@
-import demoProject from "../../data/demoProject";
 import NavigationTree from "./NavigationTree";
+import { useProject } from "../../context/ProjectContext";
+import { useViewer } from "../../context/ViewerContext";
 
-function findModuleName(piece) {
-  const module = demoProject.modules.find(
-    (module) => module.id === piece.moduleId
-  );
+function Sidebar() {
+  const { project } = useProject();
 
-  return module?.name || piece.moduleId || "--";
-}
+  const {
+    selectedPiece,
+    setSelectedPiece,
+    isolateMode,
+    setIsolateMode,
+  } = useViewer();
 
-function findMaterialName(piece) {
-  const material = demoProject.materials.find(
-    (material) => material.id === piece.materialId
-  );
 
-  return material?.name || piece.materialId || "--";
-}
+  function findModuleName(piece) {
+    const module = project.modules.find(
+      (module) => module.id === piece.moduleId
+    );
 
-function Sidebar({ selectedPiece, onSelectPiece }) {
+    return module?.name || piece.moduleId || "--";
+  }
+
+
+  function findMaterialName(piece) {
+    const material = project.materials.find(
+      (material) => material.id === piece.materialId
+    );
+
+    return material?.name || piece.materialId || "--";
+  }
+
+
   return (
     <aside className="sidebar">
-      <NavigationTree
-        selectedPiece={selectedPiece}
-        onSelectPiece={onSelectPiece}
-      />
+
+      <NavigationTree />
+
 
       <div className="piece-info">
+
         <h3>MANUAL 3D</h3>
 
+
         {!selectedPiece ? (
+
           <p>Selecione uma peça.</p>
+
         ) : (
+
           <>
+
             <div className="property">
               <label>Nome</label>
               <strong>{selectedPiece.name}</strong>
             </div>
+
 
             <div className="property">
               <label>Código</label>
               <strong>{selectedPiece.id}</strong>
             </div>
 
-            <div className="property">
-              <label>Tipo</label>
-              <strong>{selectedPiece.type}</strong>
-            </div>
 
             <div className="property">
               <label>Material</label>
-              <strong>{findMaterialName(selectedPiece)}</strong>
-            </div>
-
-            <div className="property">
-              <label>Dimensão</label>
               <strong>
-                {selectedPiece.dimensions?.width} ×{" "}
-                {selectedPiece.dimensions?.height} ×{" "}
-                {selectedPiece.dimensions?.thickness} mm
+                {findMaterialName(selectedPiece)}
               </strong>
             </div>
 
+
             <div className="property">
               <label>Módulo</label>
-              <strong>{findModuleName(selectedPiece)}</strong>
+              <strong>
+                {findModuleName(selectedPiece)}
+              </strong>
             </div>
 
+
             <div className="sidebar-actions">
-              <button>👁 Isolar</button>
-              <button>💥 Explodir</button>
-              <button>📷 Vista</button>
+
+              <button
+                onClick={() =>
+                  setIsolateMode("none")
+                }
+              >
+                👁 Mostrar Tudo
+              </button>
+
+
+              <button
+                onClick={() =>
+                  setIsolateMode("module")
+                }
+              >
+                📦 Mostrar Módulo
+              </button>
+
+
+              <button
+                onClick={() =>
+                  setIsolateMode("piece")
+                }
+              >
+                🔍 Mostrar Peça
+              </button>
+
             </div>
+
           </>
+
         )}
+
       </div>
+
     </aside>
   );
 }
+
 
 export default Sidebar;
