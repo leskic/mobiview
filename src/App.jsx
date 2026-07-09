@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import "./App.css";
 
 import Header from "./components/layout/Header";
@@ -6,15 +7,41 @@ import Viewer from "./components/viewer/Viewer";
 import Toolbar from "./components/layout/Toolbar";
 
 function App() {
+  const fileInputRef = useRef(null);
+  const [modelUrl, setModelUrl] = useState(null);
+  const [explodeAmount, setExplodeAmount] = useState(0);
+
+  function handleOpenProject() {
+    fileInputRef.current.click();
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    setModelUrl(url);
+  }
+
   return (
     <div className="app">
-      <Header />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".glb,.gltf"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
 
+      <Header onOpenProject={handleOpenProject} />
       <Sidebar />
 
-      <Viewer />
+      <Viewer modelUrl={modelUrl} explodeAmount={explodeAmount} />
 
-      <Toolbar />
+      <Toolbar
+        explodeAmount={explodeAmount}
+        onExplodeChange={setExplodeAmount}
+      />
     </div>
   );
 }

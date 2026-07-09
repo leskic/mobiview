@@ -1,4 +1,4 @@
-function Header() {
+function Header({ onOpenProject }) {
   return (
     <header className="header">
       <div>
@@ -6,7 +6,10 @@ function Header() {
         <span>Visualização inteligente para móveis planejados</span>
       </div>
 
-      <button className="primary-button">
+      <button
+        className="primary-button"
+        onClick={onOpenProject}
+      >
         Abrir Projeto
       </button>
     </header>

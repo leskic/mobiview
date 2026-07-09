@@ -1,9 +1,9 @@
 import Scene from "../../engine/Scene";
 
-function Viewer() {
+function Viewer({ modelUrl, explodeAmount }) {
   return (
     <main className="viewer-area">
-      <Scene />
+      <Scene modelUrl={modelUrl} explodeAmount={explodeAmount} />
     </main>
   );
 }

@@ -111,3 +111,22 @@ button {
   text-align: center;
   min-width: 100px;
 }
+.explode-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1f2937;
+  border: 1px solid #374151;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.explode-control input {
+  width: 160px;
+}
+
+.explode-control span,
+.explode-control strong {
+  color: white;
+  font-size: 14px;
+}
