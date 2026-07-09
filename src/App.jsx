@@ -8,6 +8,7 @@ import Toolbar from "./components/layout/Toolbar";
 
 function App() {
   const fileInputRef = useRef(null);
+
   const [modelUrl, setModelUrl] = useState(null);
   const [explodeAmount, setExplodeAmount] = useState(0);
   const [selectedPiece, setSelectedPiece] = useState(null);
@@ -20,8 +21,7 @@ function App() {
     const file = event.target.files[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    setModelUrl(url);
+    setModelUrl(URL.createObjectURL(file));
   }
 
   return (
@@ -34,14 +34,21 @@ function App() {
         onChange={handleFileChange}
       />
 
-      <Header onOpenProject={handleOpenProject} />
-      <Sidebar selectedPiece={selectedPiece} />
+      <Header
+  onOpenProject={handleOpenProject}
+  onSelectPiece={setSelectedPiece}
+/>
+
+      <Sidebar
+        selectedPiece={selectedPiece}
+        onSelectPiece={setSelectedPiece}
+      />
 
       <Viewer
         modelUrl={modelUrl}
         explodeAmount={explodeAmount}
-        onSelectPiece={setSelectedPiece}
         selectedPiece={selectedPiece}
+        onSelectPiece={setSelectedPiece}
       />
 
       <Toolbar

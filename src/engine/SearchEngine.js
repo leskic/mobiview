@@ -1,36 +1,46 @@
 class SearchEngine {
-  static searchPiece(project, query) {
-    if (!query) return [];
+  constructor(project) {
+    this.project = project;
+  }
 
-    const q = query.toLowerCase();
+  search(query) {
+    if (!query) return null;
 
-    const result = [];
+    query = query.toLowerCase();
 
-    for (const module of project.modules) {
+    // Peças
+    for (const module of this.project.modules) {
       for (const piece of module.pieces) {
+
         if (
-          piece.id.toLowerCase().includes(q) ||
-          piece.name.toLowerCase().includes(q)
+          piece.id.toLowerCase() === query ||
+          piece.name.toLowerCase().includes(query)
         ) {
-          result.push({
-            module,
-            piece,
-          });
+          return {
+            type: "piece",
+            object: piece,
+          };
         }
+
       }
     }
 
-    return result;
-  }
+    // Módulos
+    for (const module of this.project.modules) {
 
-  static searchModule(project, query) {
-    if (!query) return [];
+      if (
+        module.id.toLowerCase() === query ||
+        module.name.toLowerCase().includes(query)
+      ) {
+        return {
+          type: "module",
+          object: module,
+        };
+      }
 
-    const q = query.toLowerCase();
+    }
 
-    return project.modules.filter((module) =>
-      module.name.toLowerCase().includes(q)
-    );
+    return null;
   }
 }
 

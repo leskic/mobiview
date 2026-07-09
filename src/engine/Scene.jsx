@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid } from "@react-three/drei";
 
 import demoProject from "../data/demoProject";
+import CameraController from "./Camera";
 
 function getMaterial(project, materialId) {
   return project.materials.find((material) => material.id === materialId);
@@ -10,30 +12,24 @@ function getMaterial(project, materialId) {
 function getPieceSize(piece) {
   const { width, height, thickness } = piece.dimensions;
 
-  switch (piece.type) {
-    case "LATERAL":
-      return [thickness / 100, height / 350, width / 1000];
-
-    case "PORTA":
-      return [width / 700, height / 350, thickness / 100];
-
-    default:
-      return [1, 1, 1];
+  if (piece.type === "LATERAL") {
+    return [thickness / 100, height / 350, width / 1000];
   }
+
+  if (piece.type === "PORTA") {
+    return [width / 700, height / 350, thickness / 100];
+  }
+
+  return [1, 1, 1];
 }
 
-function PieceMesh({
-  piece,
-  project,
-  explodeAmount,
-  selectedPiece,
-  onSelectPiece,
-}) {
+function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece }) {
   const material = getMaterial(project, piece.materialId);
-
   const finalPosition = piece.getExplodedPosition(explodeAmount);
 
   const isSelected = selectedPiece?.id === piece.id;
+  const hasSelection = Boolean(selectedPiece);
+  const isMuted = hasSelection && !isSelected;
 
   function handleClick(event) {
     event.stopPropagation();
@@ -41,16 +37,11 @@ function PieceMesh({
   }
 
   return (
-    <mesh
-      position={finalPosition}
-      castShadow
-      receiveShadow
-      onClick={handleClick}
-    >
+    <mesh position={finalPosition} castShadow receiveShadow onClick={handleClick}>
       <boxGeometry args={getPieceSize(piece)} />
 
       <meshStandardMaterial
-        color={isSelected ? "#22c55e" : material.color}
+        color={isSelected ? "#22c55e" : isMuted ? "#64748b" : material?.color || "#cccccc"}
         emissive={isSelected ? "#14532d" : "#000000"}
         emissiveIntensity={isSelected ? 0.8 : 0}
       />
@@ -58,12 +49,7 @@ function PieceMesh({
   );
 }
 
-function ProjectModel({
-  project,
-  explodeAmount,
-  selectedPiece,
-  onSelectPiece,
-}) {
+function ProjectModel({ project, explodeAmount, selectedPiece, onSelectPiece }) {
   return (
     <group>
       {project.modules.map((module) =>
@@ -84,22 +70,16 @@ function ProjectModel({
 
 function Floor() {
   return (
-    <mesh
-      rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, -0.5, 0]}
-      receiveShadow
-    >
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
       <planeGeometry args={[30, 30]} />
       <meshStandardMaterial color="#dddddd" />
     </mesh>
   );
 }
 
-function Scene({
-  explodeAmount,
-  onSelectPiece,
-  selectedPiece,
-}) {
+function Scene({ explodeAmount, onSelectPiece, selectedPiece }) {
+  const controlsRef = useRef(null);
+
   return (
     <Canvas
       shadows
@@ -107,11 +87,12 @@ function Scene({
       onPointerMissed={() => onSelectPiece(null)}
     >
       <ambientLight intensity={1.3} />
+      <directionalLight position={[5, 8, 5]} intensity={2} castShadow />
 
-      <directionalLight
-        position={[5, 8, 5]}
-        intensity={2}
-        castShadow
+      <CameraController
+        selectedPiece={selectedPiece}
+        explodeAmount={explodeAmount}
+        controlsRef={controlsRef}
       />
 
       <ProjectModel
@@ -134,11 +115,7 @@ function Scene({
         fadeStrength={1}
       />
 
-      <OrbitControls
-        makeDefault
-        enableDamping
-        dampingFactor={0.08}
-      />
+      <OrbitControls ref={controlsRef} makeDefault enableDamping dampingFactor={0.08} />
     </Canvas>
   );
 }
