@@ -2,14 +2,89 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid } from "@react-three/drei";
 import ModelLoader from "./ModelLoader";
 
-function Cube({ explodeAmount }) {
-  const distance = explodeAmount / 50;
+function Piece({ name, size, position, color, explodeDirection, explodeAmount }) {
+  const factor = explodeAmount / 100;
+
+  const finalPosition = [
+    position[0] + explodeDirection[0] * factor,
+    position[1] + explodeDirection[1] * factor,
+    position[2] + explodeDirection[2] * factor,
+  ];
 
   return (
-    <mesh position={[0, distance, 0]} castShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#f59e0b" />
+    <mesh position={finalPosition} castShadow>
+      <boxGeometry args={size} />
+      <meshStandardMaterial color={color} />
     </mesh>
+  );
+}
+
+function TestCabinet({ explodeAmount }) {
+  return (
+    <group>
+      <Piece
+        name="Lateral Esquerda"
+        size={[0.12, 2, 0.8]}
+        position={[-0.56, 0.5, 0]}
+        color="#d97706"
+        explodeDirection={[-1.2, 0, 0]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Lateral Direita"
+        size={[0.12, 2, 0.8]}
+        position={[0.56, 0.5, 0]}
+        color="#d97706"
+        explodeDirection={[1.2, 0, 0]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Base"
+        size={[1.2, 0.12, 0.8]}
+        position={[0, -0.44, 0]}
+        color="#f59e0b"
+        explodeDirection={[0, -0.8, 0]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Tampo"
+        size={[1.2, 0.12, 0.8]}
+        position={[0, 1.44, 0]}
+        color="#f59e0b"
+        explodeDirection={[0, 0.8, 0]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Prateleira"
+        size={[1.05, 0.08, 0.75]}
+        position={[0, 0.45, 0]}
+        color="#fbbf24"
+        explodeDirection={[0, 0.4, 0]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Porta"
+        size={[1.15, 1.8, 0.08]}
+        position={[0, 0.5, 0.44]}
+        color="#92400e"
+        explodeDirection={[0, 0, 1.4]}
+        explodeAmount={explodeAmount}
+      />
+
+      <Piece
+        name="Fundo"
+        size={[1.15, 1.9, 0.06]}
+        position={[0, 0.5, -0.43]}
+        color="#b45309"
+        explodeDirection={[0, 0, -1.0]}
+        explodeAmount={explodeAmount}
+      />
+    </group>
   );
 }
 
@@ -31,7 +106,7 @@ function Scene({ modelUrl, explodeAmount }) {
       {modelUrl ? (
         <ModelLoader url={modelUrl} />
       ) : (
-        <Cube explodeAmount={explodeAmount} />
+        <TestCabinet explodeAmount={explodeAmount} />
       )}
 
       <Floor />
