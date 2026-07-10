@@ -10,7 +10,7 @@ module MobiViewExporter
 
     extend self
 
-    VERSION = "3.5.0"
+    VERSION = "3.6.0"
 
     ############################################################
     # EXPORTAÇÃO
@@ -89,6 +89,8 @@ module MobiViewExporter
         },
 
         materials: build_materials(model),
+
+        views: ViewsBuilder.build(model, pieces),
 
         pieces: pieces.map { |piece|
 

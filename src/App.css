@@ -553,6 +553,65 @@ body,
     color:#555;
 }
 
+.parts-list{
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.parts-list-summary{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 10px;
+    border:1px solid #9ca3af;
+    background:#f8fafc;
+    font-size:10px;
+}
+
+.parts-table-columns{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    align-items:start;
+}
+
+.parts-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    font-size:7px;
+}
+
+.parts-table th,
+.parts-table td{
+    border:1px solid #6b7280;
+    padding:3px 4px;
+    text-align:left;
+    overflow-wrap:anywhere;
+    line-height:1.2;
+}
+
+.parts-table th{
+    background:#e5e7eb;
+    font-weight:800;
+}
+
+.parts-table th:nth-child(1),
+.parts-table td:nth-child(1){ width:12%; }
+.parts-table th:nth-child(2),
+.parts-table td:nth-child(2){ width:25%; }
+.parts-table th:nth-child(3),
+.parts-table td:nth-child(3){ width:24%; white-space:nowrap; }
+.parts-table th:nth-child(4),
+.parts-table td:nth-child(4){ width:31%; }
+.parts-table th:nth-child(5),
+.parts-table td:nth-child(5){ width:8%; text-align:center; }
+
 @media print{
     @page{
         size:A4 landscape;
@@ -562,6 +621,16 @@ body,
     html,
     body,
     #root{
+        width:auto;
+        height:auto;
+        overflow:visible;
+        background:#fff;
+    }
+
+    .detailing-workspace{
+        display:block;
+        width:auto;
+        height:auto;
         overflow:visible;
         background:#fff;
     }
@@ -571,19 +640,30 @@ body,
     }
 
     .detail-stage{
+        display:block;
+        width:auto;
+        height:auto;
         padding:0;
         overflow:visible;
     }
 
-    .detail-sheet{
+    .detail-sheet,
+    .detail-sheet.is-hidden{
+        display:grid!important;
         width:297mm;
         height:210mm;
         aspect-ratio:auto;
+        margin:0;
         box-shadow:none;
+        break-after:page;
         page-break-after:always;
+        overflow:hidden;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
     }
 
-    .detail-sheet.is-hidden{
-        display:grid;
+    .detail-sheet:last-child{
+        break-after:auto;
+        page-break-after:auto;
     }
 }

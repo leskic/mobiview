@@ -9,12 +9,17 @@ require_relative 'entity_filter'
 require_relative 'entity_walker'
 require_relative 'geometry_analyzer'
 require_relative 'piece_reader'
+require_relative 'views_builder'
 require_relative 'json_writer'
 require_relative 'manifest_writer'
 require_relative 'project_writer'
 require_relative 'pieces_writer'
 require_relative 'modules_writer'
 require_relative 'materials_writer'
+require_relative 'scene_node'
+require_relative 'scene_graph'
+require_relative 'scene_writer'
+require_relative 'views_writer'
 require_relative 'mvproj_writer'
 require_relative 'inspector'
 require_relative 'dinabox_explorer'
@@ -25,7 +30,7 @@ module MobiViewExporter
   extend self
 
   PLUGIN_NAME = "MobiView Exporter"
-  VERSION = "5.7.0"
+  VERSION = "5.8.0"
 
   def collect_pieces
 

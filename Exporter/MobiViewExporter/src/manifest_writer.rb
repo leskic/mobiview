@@ -32,6 +32,7 @@ module MobiViewExporter
           pieces: "pieces.json",
           modules: "modules.json",
           materials: "materials.json",
+          views: "views.json",
           model: "model.glb",
           preview: "preview.png",
           thumbnail: "thumbnail.webp"

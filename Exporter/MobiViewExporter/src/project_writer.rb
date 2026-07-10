@@ -17,7 +17,8 @@ module MobiViewExporter
         exported_at: Time.now.strftime("%Y-%m-%d %H:%M:%S"),
 
         statistics: {
-          total_pieces: pieces.size
+          total_pieces: pieces.size,
+          total_views: ViewsBuilder.build(model, pieces).size
         }
       }
 

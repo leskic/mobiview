@@ -57,6 +57,12 @@ module MobiViewExporter
         output_folder
       )
 
+      ViewsWriter.write(
+        model,
+        pieces,
+        output_folder
+      )
+
       ########################################################
 
       UI.messagebox(
@@ -70,7 +76,8 @@ module MobiViewExporter
         "- pieces.json\n" \
         "- modules.json\n" \
         "- materials.json\n" \
-        "- scene.json"
+        "- scene.json\n" \
+        "- views.json"
 
       )
 
