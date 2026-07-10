@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import DoorElevation from "./DoorElevation";
 import FrontElevation from "./FrontElevation";
 import MountingElevation from "./MountingElevation";
+import PlanElevation from "./PlanElevation";
+import IsometricElevation from "./IsometricElevation";
 import PartsList from "./PartsList";
 import RackDetail from "./RackDetail";
 import TitleBlock from "./TitleBlock";
@@ -28,6 +30,8 @@ function DetailingMode({ project, onClose }) {
   const capabilities = useMemo(() => detailingCapabilities(viewProject), [viewProject]);
   const sheets = useMemo(() => [
     { id: "DT1.1", label: "Cotas" },
+    { id: "PLAN", label: "Planta" },
+    { id: "ISO", label: "Isométrica" },
     ...(capabilities.hasDoors ? [{ id: "DT1.2", label: "Portas" }] : []),
     { id: "DT1.3", label: "Montagem" },
     ...(capabilities.hasFronts ? [{ id: "DT1.4", label: "Interna" }] : []),
@@ -119,6 +123,24 @@ function DetailingMode({ project, onClose }) {
             </div>
           </div>
           <TitleBlock project={viewProject} sheetNumber={code("DT1.1")} />
+        </article>
+
+        <article className={sheetClass("PLAN")}>
+          <div className="detail-content">
+            <h2>PLANTA BAIXA - INDICAÇÃO DAS VISTAS</h2>
+            <PlanElevation project={project} />
+            <div className="detail-caption"><span>PROJEÇÃO SUPERIOR</span><span>SETAS INDICAM O SENTIDO DAS ELEVAÇÕES</span></div>
+          </div>
+          <TitleBlock project={project} content="PLANTA BAIXA" sheetNumber={code("PLAN")} />
+        </article>
+
+        <article className={sheetClass("ISO")}>
+          <div className="detail-content">
+            <h2>VISTA ISOMÉTRICA</h2>
+            <IsometricElevation project={viewProject} />
+            <div className="detail-caption"><span>PROJEÇÃO ISOMÉTRICA AUTOMÁTICA</span><span>{projectPieces(viewProject).length} PEÇAS</span></div>
+          </div>
+          <TitleBlock project={viewProject} content="VISTA ISOMÉTRICA" sheetNumber={code("ISO")} />
         </article>
 
         {capabilities.hasDoors && <article className={sheetClass("DT1.2")}>

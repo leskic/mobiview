@@ -137,7 +137,7 @@ function MountingElevation({ project }) {
           height={Math.max(bounds.maxZ - bounds.minZ, 0.8)}
           fill={materialColor(project, piece)}
           stroke="#303030"
-          strokeWidth={2.2}
+          strokeWidth={0.8}
           vectorEffect="non-scaling-stroke"
         />
       ))}

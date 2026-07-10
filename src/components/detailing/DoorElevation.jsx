@@ -50,7 +50,7 @@ function DoorElevation({ project }) {
             height={Math.max(bounds.maxZ - bounds.minZ, 0.8)}
             fill="#f3f4f6"
             stroke="#9ca3af"
-            strokeWidth={2}
+            strokeWidth={0.7}
             vectorEffect="non-scaling-stroke"
           />
         ))}
@@ -71,7 +71,7 @@ function DoorElevation({ project }) {
               height={y2 - y1}
               fill={materialColor(project, piece)}
               stroke="#202020"
-              strokeWidth={3}
+              strokeWidth={0.85}
               vectorEffect="non-scaling-stroke"
             />
             <line
@@ -80,7 +80,7 @@ function DoorElevation({ project }) {
               x2={opensLeft ? x2 : x1}
               y2={(y1 + y2) / 2}
               stroke="#7c3aed"
-              strokeWidth={1.4}
+              strokeWidth={0.65}
               vectorEffect="non-scaling-stroke"
             />
             <line
@@ -89,7 +89,7 @@ function DoorElevation({ project }) {
               x2={opensLeft ? x2 : x1}
               y2={(y1 + y2) / 2}
               stroke="#7c3aed"
-              strokeWidth={1.4}
+              strokeWidth={0.65}
               vectorEffect="non-scaling-stroke"
             />
             <DimensionHorizontal

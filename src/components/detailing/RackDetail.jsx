@@ -56,7 +56,7 @@ function RackDetail({ project }) {
         height={height}
         fill="#fff"
         stroke="#202020"
-        strokeWidth={3}
+        strokeWidth={0.8}
         vectorEffect="non-scaling-stroke"
       />
       {rackPieces.map(({ piece, bounds }, index) => (
@@ -68,7 +68,7 @@ function RackDetail({ project }) {
           height={bounds.maxZ - bounds.minZ}
           fill={materialColor(project, piece)}
           stroke="#202020"
-          strokeWidth={2.2}
+          strokeWidth={0.75}
           vectorEffect="non-scaling-stroke"
         />
       ))}
@@ -125,7 +125,7 @@ function RackDetail({ project }) {
         r={fontSize * 0.8}
         fill="#fff"
         stroke="#7c3aed"
-        strokeWidth={2}
+        strokeWidth={0.7}
         vectorEffect="non-scaling-stroke"
       />
       <text

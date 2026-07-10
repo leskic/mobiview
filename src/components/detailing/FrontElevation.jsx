@@ -73,7 +73,7 @@ function FrontElevation({
             height={Math.max(bounds.maxZ - bounds.minZ, 0.8)}
             fill={materialColor(project, piece)}
             stroke="#202020"
-            strokeWidth={3}
+            strokeWidth={0.8}
             vectorEffect="non-scaling-stroke"
           />
         ))}

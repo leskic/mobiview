@@ -419,7 +419,7 @@ body,
 .mounting-callout line,
 .mounting-callout polyline{
     stroke:#111827;
-    stroke-width:1.5;
+    stroke-width:.7;
     vector-effect:non-scaling-stroke;
     fill:none;
 }
@@ -470,8 +470,37 @@ body,
 
 .detail-dimension line{
     fill:none;
-    stroke-width:1.25;
+    stroke-width:.65;
     vector-effect:non-scaling-stroke;
+}
+
+.technical-outline{
+    stroke-width:.7;
+    vector-effect:non-scaling-stroke;
+    stroke-linejoin:round;
+}
+
+.plan-view-marker line{
+    stroke:#7c3aed;
+    stroke-width:.8;
+    vector-effect:non-scaling-stroke;
+}
+
+.plan-view-marker circle{
+    fill:#fff;
+    stroke:#7c3aed;
+    stroke-width:.8;
+    vector-effect:non-scaling-stroke;
+}
+
+.plan-view-marker text{
+    fill:#7c3aed;
+    font-family:Arial,sans-serif;
+    font-weight:700;
+}
+
+.isometric-sheet polygon{
+    fill-opacity:.78;
 }
 
 .detail-dimension text{
@@ -482,7 +511,7 @@ body,
 .detail-reference rect{
     fill:none;
     stroke:#7c3aed;
-    stroke-width:1.5;
+    stroke-width:.7;
     stroke-dasharray:7 5;
     vector-effect:non-scaling-stroke;
 }
@@ -490,7 +519,7 @@ body,
 .detail-reference circle{
     fill:#fff;
     stroke:#7c3aed;
-    stroke-width:1.5;
+    stroke-width:.7;
     vector-effect:non-scaling-stroke;
 }
 

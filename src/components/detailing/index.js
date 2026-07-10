@@ -5,6 +5,8 @@ export { default as DimensionVertical } from "./DimensionVertical";
 export { default as DoorElevation } from "./DoorElevation";
 export { default as FrontElevation } from "./FrontElevation";
 export { default as MountingElevation } from "./MountingElevation";
+export { default as PlanElevation } from "./PlanElevation";
+export { default as IsometricElevation } from "./IsometricElevation";
 export { default as PartsList } from "./PartsList";
 export { default as RackDetail } from "./RackDetail";
 export { default as TitleBlock } from "./TitleBlock";
