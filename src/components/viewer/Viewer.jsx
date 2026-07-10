@@ -1,4 +1,4 @@
-import Scene from "../../engine/Scene";
+import Scene from "../../engine/Scene.jsx";
 import { useViewer } from "../../context/ViewerContext";
 
 function Viewer({ modelUrl }) {

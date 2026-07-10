@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Bounds, OrbitControls, Grid } from "@react-three/drei";
+import { OrbitControls, Grid } from "@react-three/drei";
 import {
   BufferGeometry,
   DoubleSide,
@@ -44,6 +44,10 @@ function getTexture(material) {
 
 function pieceId(piece) {
   return piece.id || piece.uuid || piece.mv_uuid || piece.persistent_id;
+}
+
+function pieceModuleId(piece) {
+  return piece.moduleId || piece.module_id || piece.__moduleId || "sem_modulo";
 }
 
 function getPieceSize(piece) {
@@ -200,13 +204,20 @@ function shouldShowPiece(piece, selectedPiece, isolateMode, playbackStep) {
   }
 
   if (isolateMode === "module") {
-    return piece.moduleId === selectedPiece.moduleId;
+    return pieceModuleId(piece) === pieceModuleId(selectedPiece);
   }
 
   return true;
 }
 
-function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece }) {
+function PieceMesh({
+  piece,
+  pieceIndex,
+  project,
+  explodeAmount,
+  selectedPiece,
+  onSelectPiece,
+}) {
   const { isolateMode, playbackStep } = useViewer();
 
   const realGeometry = useMemo(() => {
@@ -306,18 +317,35 @@ function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece
     [meshMaterials]
   );
 
-  if (!shouldShowPiece(piece, selectedPiece, isolateMode, playbackStep)) {
-    return null;
-  }
-
-  const material = getMaterial(project, piece.materialId);
+  const material = getMaterial(project, piece.materialId || piece.material);
   const transform = getPieceTransform(piece);
+  const explodedMeshPosition = useMemo(() => {
+    if (!realGeometry || explodeAmount <= 0) return [0, 0, 0];
+
+    // Cada peça recebe uma direção própria e determinística. O deslocamento é
+    // aplicado ao grupo externo; os vértices absolutos da malha permanecem
+    // intactos e o transform.position exportado nunca é reaplicado.
+    const angle = pieceIndex * 2.399963229728653;
+    const verticalLayer = (pieceIndex % 7) - 3;
+    const direction = new Vector3(
+      Math.cos(angle),
+      verticalLayer * 0.16,
+      Math.sin(angle)
+    ).normalize();
+
+    const distance = 3 * (explodeAmount / 100);
+    return direction.multiplyScalar(distance).toArray();
+  }, [realGeometry, explodeAmount, pieceIndex]);
   const finalPosition =
     realGeometry
-      ? [0, 0, 0]
+      ? explodedMeshPosition
       : typeof piece.getExplodedPosition === "function"
       ? piece.getExplodedPosition(explodeAmount)
       : transform.position;
+
+  if (!shouldShowPiece(piece, selectedPiece, isolateMode, playbackStep)) {
+    return null;
+  }
 
   function handleClick(event) {
     event.stopPropagation();
@@ -325,36 +353,38 @@ function PieceMesh({ piece, project, explodeAmount, selectedPiece, onSelectPiece
   }
 
   return (
-    <mesh
-      position={finalPosition}
-      rotation={realGeometry ? undefined : transform.rotation}
-      quaternion={realGeometry ? undefined : transform.quaternion}
-      castShadow
-      receiveShadow
-      onClick={handleClick}
-      material={realGeometry ? meshMaterials : undefined}
-    >
-      {realGeometry ? (
-        <primitive object={realGeometry} attach="geometry" />
-      ) : (
-        <boxGeometry args={getPieceSize(piece)} />
-      )}
+    <group position={realGeometry ? explodedMeshPosition : [0, 0, 0]}>
+      <mesh
+        position={realGeometry ? [0, 0, 0] : finalPosition}
+        rotation={realGeometry ? undefined : transform.rotation}
+        quaternion={realGeometry ? undefined : transform.quaternion}
+        castShadow
+        receiveShadow
+        onClick={handleClick}
+        material={realGeometry ? meshMaterials : undefined}
+      >
+        {realGeometry ? (
+          <primitive object={realGeometry} attach="geometry" />
+        ) : (
+          <boxGeometry args={getPieceSize(piece)} />
+        )}
 
-      {!realGeometry && (
-        <meshStandardMaterial
-          side={DoubleSide}
-          color={
-            isSelected
-              ? "#22c55e"
-              : isMuted
-              ? "#64748b"
-              : material?.color || piece.color || "#d8c6a4"
-          }
-          emissive={isSelected ? "#14532d" : "#000000"}
-          emissiveIntensity={isSelected ? 0.8 : 0}
-        />
-      )}
-    </mesh>
+        {!realGeometry && (
+          <meshStandardMaterial
+            side={DoubleSide}
+            color={
+              isSelected
+                ? "#22c55e"
+                : isMuted
+                ? "#64748b"
+                : material?.color || piece.color || "#d8c6a4"
+            }
+            emissive={isSelected ? "#14532d" : "#000000"}
+            emissiveIntensity={isSelected ? 0.8 : 0}
+          />
+        )}
+      </mesh>
+    </group>
   );
 }
 
@@ -363,7 +393,12 @@ function ProjectModel({ project, explodeAmount, selectedPiece, onSelectPiece }) 
     () =>
       Array.isArray(project?.pieces)
         ? project.pieces
-        : (project?.modules || []).flatMap((module) => module.pieces || []),
+        : (project?.modules || []).flatMap((module) =>
+            (module.pieces || []).map((piece) => ({
+              ...piece,
+              __moduleId: piece.moduleId || piece.module_id || module.id,
+            }))
+          ),
     [project]
   );
 
@@ -373,6 +408,7 @@ function ProjectModel({ project, explodeAmount, selectedPiece, onSelectPiece }) 
         <PieceMesh
           key={piece.id || piece.uuid || piece.mv_uuid || index}
           piece={piece}
+          pieceIndex={index}
           project={project}
           explodeAmount={explodeAmount}
           selectedPiece={selectedPiece}
@@ -430,13 +466,7 @@ function Scene({ modelUrl, explodeAmount, onSelectPiece, selectedPiece }) {
       />
 
       <Suspense fallback={null}>
-        <Bounds
-          key={sceneKey}
-          fit
-          clip
-          observe
-          margin={1.15}
-        >
+        <group key={sceneKey}>
           {hasProject ? (
             <ProjectModel
               project={project}
@@ -453,7 +483,7 @@ function Scene({ modelUrl, explodeAmount, onSelectPiece, selectedPiece }) {
               />
             </group>
           ) : null}
-        </Bounds>
+        </group>
       </Suspense>
 
       <Floor />

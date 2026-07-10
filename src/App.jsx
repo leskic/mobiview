@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import "./App.css";
 
 import Viewer from "./components/viewer/Viewer";
+import DetailingMode from "./components/detailing/DetailingMode";
 import { useProject } from "./context/ProjectContext";
 import { useViewer } from "./context/ViewerContext";
 import { loadProject } from "./services/projectLoader";
@@ -12,11 +13,16 @@ function App() {
   const {
     selectedPiece,
     setSelectedPiece,
+    explodeAmount,
+    setExplodeAmount,
+    isolateMode,
+    setIsolateMode,
     cameraView,
     requestCameraView,
   } = useViewer();
 
   const [modelUrl, setModelUrl] = useState(null);
+  const [detailingMode, setDetailingMode] = useState(false);
 
   function openFile() {
     fileInputRef.current.click();
@@ -94,6 +100,15 @@ function App() {
     modules[moduleId].push(piece);
   });
 
+  if (detailingMode) {
+    return (
+      <DetailingMode
+        project={project}
+        onClose={() => setDetailingMode(false)}
+      />
+    );
+  }
+
   return (
     <div className="mv-app">
       <input
@@ -115,10 +130,33 @@ function App() {
 
         <div className="mv-toolbar">
           <button onClick={openFile}>Abrir</button>
+          <button
+            disabled={!project || pieces.length === 0}
+            onClick={() => setDetailingMode(true)}
+          >
+            Detalhamento
+          </button>
           <button>Medir</button>
-          <button>Explodir</button>
-          <button>Isolar</button>
-          <button>Ocultar</button>
+          <button
+            onClick={() => setExplodeAmount(explodeAmount > 0 ? 0 : 100)}
+          >
+            {explodeAmount > 0 ? "Juntar" : "Explodir"}
+          </button>
+          <button
+            disabled={!selectedPiece}
+            className={isolateMode === "piece" ? "active" : ""}
+            onClick={() => setIsolateMode("piece")}
+          >
+            Isolar Peça
+          </button>
+          <button
+            disabled={!selectedPiece}
+            className={isolateMode === "module" ? "active" : ""}
+            onClick={() => setIsolateMode("module")}
+          >
+            Isolar Módulo
+          </button>
+          <button onClick={() => setIsolateMode("none")}>Mostrar Tudo</button>
           <button>Configurações</button>
         </div>
       </header>
